@@ -27,7 +27,7 @@ RUN apt-get update && \
 
 RUN set -ex; \
     \
-    if [ ${ARCH} = "arm" -o ${ARCH} = "arm64" ]; then \
+    if [ ${ARCH} = "arm" -o ${ARCH} = "arm64" -o ${ARCH} = "aarch64" ]; then \
       curl --output pfclient.tar.gz "http://client.planefinder.net/pfclient_${PFCLIENT_VERSION}_armhf.tar.gz"; \
       md5sum pfclient.tar.gz && echo "${PFCLIENT_ARM_HASH}  pfclient.tar.gz" | md5sum -c ; \
     fi; \
