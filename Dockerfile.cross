@@ -1,6 +1,15 @@
-ARG BASE=debian:stretch-slim
+ARG BASE
+FROM $BASE AS base
 
-FROM --platform=$TARGETPLATFORM $BASE
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    iputils-ping \
+    libc-bin \
+    libc-dbg && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+FROM --platform=$TARGETPLATFORM $BASE AS builder
 
 ARG TARGETARCH
 
@@ -15,16 +24,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     curl \
-    ca-certificates \
-    iputils-ping \
-    libc-bin \
-    libc-dbg && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    ca-certificates
 
 RUN set -ex; \
     \
-    if [ ${TARGETARCH} = "arm" -o ${TARGETARCH} = "arm64" -o ${TARGETARCH} = "aarch64" ]; then \
+    if [ ${TARGETARCH} = "arm" -o ${TARGETARCH} = "arm64" ]; then \
       curl --output pfclient.tar.gz "http://client.planefinder.net/pfclient_${PFCLIENT_VERSION}_armhf.tar.gz"; \
       md5sum pfclient.tar.gz && echo "${PFCLIENT_ARM_HASH}  pfclient.tar.gz" | md5sum -c ; \
     fi; \
@@ -35,6 +39,10 @@ RUN set -ex; \
     tar -xvf pfclient.tar.gz ; \
     mv pfclient /usr/local/bin/pfclient ; \
     rm pfclient.tar.gz
+
+FROM base
+
+COPY --from=builder /usr/local/bin/pfclient /usr/local/bin/pfclient
 
 COPY pfclient-runner.sh /usr/local/bin/pfclient-runner
 
@@ -47,11 +55,19 @@ HEALTHCHECK --start-period=1m --interval=30s --timeout=5s --retries=3 CMD curl -
 ENTRYPOINT ["pfclient-runner"]
 
 # Metadata
-ARG VCS_REF="Unknown"
-LABEL maintainer="ginnserv@gmail.com" \
-      org.label-schema.name="Docker ADS-B - planefinder" \
-      org.label-schema.description="Docker container for ADS-B - This is the planefinder.net component" \
-      org.label-schema.url="https://github.com/ShoGinn/planefinder" \
-      org.label-schema.vcs-ref="${VCS_REF}" \
-      org.label-schema.vcs-url="https://github.com/ShoGinn/planefinder" \
-      org.label-schema.schema-version="1.0"
+ARG MAINTAINER
+ARG NAME
+ARG DESCRIPTION
+ARG URL
+ARG BUILD_DATE
+ARG VCS_URL
+ARG VCS_REF
+
+LABEL maintainer="${MAINTAINER}" \
+  org.label-schema.build-date="${BUILD_DATE}" \
+  org.label-schema.name="${NAME}" \
+  org.label-schema.description="${DESCRIPTION}" \
+  org.label-schema.url="${URL}" \
+  org.label-schema.vcs-ref="${VCS_REF}" \
+  org.label-schema.vcs-url="${VCS_URL}" \
+  org.label-schema.schema-version="1.0"
