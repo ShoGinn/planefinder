@@ -31,6 +31,25 @@ echo " - PLANEFINDER_LATITUDE =${PLANEFINDER_LATITUDE}"
 echo " - PLANEFINDER_LONGITUDE=${PLANEFINDER_LONGITUDE}"
 end_secion_spacer
 
+start_secion_spacer "Building default config"
+cat <<- EOF > /etc/pfclient-config.json
+{
+  "connection_type": "1",
+  "data_format": "1",
+  "tcp_address": "DUMP1090_SERVER",
+  "tcp_port": "DUMP1090_PORT",
+
+  "data_upload_interval": "10",
+  "aircraft_timeout": "30",
+  "select_timeout": "10",
+
+  "sharecode": "PLANEFINDER_SHARECODE",
+  "latitude": "PLANEFINDER_LATITUDE",
+  "longitude": "PLANEFINDER_LONGITUDE"
+}
+EOF
+end_secion_spacer
+
 start_secion_spacer "Waiting for ${DUMP1090_SERVER} to start up"
 sleep 5s
 end_secion_spacer

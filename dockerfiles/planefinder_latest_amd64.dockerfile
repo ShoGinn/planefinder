@@ -1,5 +1,4 @@
-ARG BASE
-FROM $BASE AS base
+FROM debian:stretch-slim AS base
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -9,7 +8,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-FROM --platform=$TARGETPLATFORM $BASE AS builder
+FROM --platform=$TARGETPLATFORM debian:stretch-slim AS builder
 
 ARG TARGETARCH
 
@@ -42,30 +41,10 @@ RUN set -ex; \
 
 FROM base
 
+COPY rootfs /
+
 COPY --from=builder /usr/local/bin/pfclient /usr/local/bin/pfclient
-
-COPY pfclient-runner.sh /usr/local/bin/pfclient-runner
-
-COPY pfclient-config.json /etc/pfclient-config.json
 
 EXPOSE 30053
 
-ENTRYPOINT ["pfclient-runner"]
-
-# Metadata
-ARG MAINTAINER
-ARG NAME
-ARG DESCRIPTION
-ARG URL
-ARG BUILD_DATE
-ARG VCS_URL
-ARG VCS_REF
-
-LABEL maintainer="${MAINTAINER}" \
-  org.label-schema.build-date="${BUILD_DATE}" \
-  org.label-schema.name="${NAME}" \
-  org.label-schema.description="${DESCRIPTION}" \
-  org.label-schema.url="${URL}" \
-  org.label-schema.vcs-ref="${VCS_REF}" \
-  org.label-schema.vcs-url="${VCS_URL}" \
-  org.label-schema.schema-version="1.0"
+ENTRYPOINT ["/usr/local/bin/docker_entrypoint.sh"]
