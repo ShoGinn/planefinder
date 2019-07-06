@@ -19,8 +19,8 @@ function end_secion_spacer {
 }
 
 
-DUMP1090_SERVER='dump1090'
-DUMP1090_PORT='30005'
+DUMP1090_SERVER=${DUMP1090_SERVER:=dump1090}
+DUMP1090_PORT=${DUMP1090_PORT:=30005}
 
 
 start_secion_spacer "Running with"
