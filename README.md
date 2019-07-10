@@ -32,6 +32,7 @@ Env variables must be passed to the container containing the planefinder.net req
 docker run -d \
 --restart unless-stopped \
 --name='planefinder' \
+-p 30053:30053 \
 -e PLANEFINDER_LATITUDE="36.000" \
 -e PLANEFINDER_LONGITUDE="-115.000" \
 -e PLANEFINDER_SHARECODE="2340dsfkl" \
