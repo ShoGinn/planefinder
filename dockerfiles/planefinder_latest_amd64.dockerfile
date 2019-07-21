@@ -4,7 +4,9 @@ RUN dpkg --add-architecture i386 && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
     libgcc1:i386 \
-    iputils-ping && \
+    iputils-ping \
+    libc-bin \
+    libc-dbg && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
