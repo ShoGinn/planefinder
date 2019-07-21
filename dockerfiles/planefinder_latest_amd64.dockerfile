@@ -1,7 +1,9 @@
 FROM debian:stretch-slim AS base
 
-RUN apt-get update && \
+RUN dpkg --add-architecture i386 && \
+    apt-get update && \
     apt-get install -y --no-install-recommends \
+    libgcc1:i386 \
     iputils-ping \
     libc-bin \
     libc-dbg && \
@@ -37,11 +39,6 @@ RUN set -ex; \
     fi; \
     tar -xvf pfclient.tar.gz ; \
     mv pfclient /usr/local/bin/pfclient ; \
-    dpkg --add-architecture i386 ; \
-    apt-get update ; \
-    apt-get install -y libgcc1:i386 ; \
-    apt-get clean ; \
-    rm -rf /var/lib/apt/lists/* ; \
     rm pfclient.tar.gz
 
 FROM base
