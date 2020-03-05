@@ -1,0 +1,2 @@
+DOCKER_DESCRIPTION="Docker container for ADS-B - This is the planefinder.net component"
+DOCKER_NAME="planefinder"
