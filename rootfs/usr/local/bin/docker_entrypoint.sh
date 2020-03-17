@@ -76,16 +76,4 @@ pfclient --version
 end_secion_spacer
 
 start_secion_spacer 'Starting pfclient'
-set +o errexit
-catchsegv pfclient --config_path=/etc/pfclient-config.json --log_path=/var/log
-PFCLIENT_STATUS=${?}
-set -o errexit
-
-if [[ "${PFCLIENT_STATUS}" -eq 0 ]]; then
-    echo "pfclient ended without failure"
-else
-    echo "pfclient ended with failure (${PFCLIENT_STATUS})"
-fi
-end_secion_spacer
-
-exit ${PFCLIENT_STATUS}
+exec /usr/local/bin/pfclient --config_path=/etc/pfclient-config.json --log_path=/var/log
