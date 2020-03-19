@@ -6,7 +6,7 @@ ARG TARGETARCH
 # setting the dpkg architecture to i386 and adding libgcc1:i386 allows it to run
 RUN \
     set -ex; \
-    if [ ${TARGETARCH} != "linux/amd64" ]; then \
+    if [ ${TARGETARCH} != "amd64" ]; then \
     apt-get update && apt-get install -y --no-install-recommends \
     iputils-ping \
     libc-bin \
@@ -46,7 +46,7 @@ RUN apt-get update && \
 
 RUN set -ex; \
     \
-    if [ ${TARGETARCH} != "linux/amd64" ]; then \
+    if [ ${TARGETARCH} != "amd64" ]; then \
       curl --output pfclient.tar.gz "http://client.planefinder.net/pfclient_${PFCLIENT_VERSION}_armhf.tar.gz"; \
       md5sum pfclient.tar.gz && echo "${PFCLIENT_ARM_HASH}  pfclient.tar.gz" | md5sum -c ; \
     else \
